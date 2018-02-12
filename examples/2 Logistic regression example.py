@@ -11,7 +11,6 @@ from sklearn.datasets import load_iris
 data = load_iris()
 raw_features = sp.array(data.data).transpose()
 raw_label = sp.array(data.target)
-x = []
 
 x = sp.array(raw_features).transpose()
 x, params = mean_normalize(x)
@@ -24,9 +23,9 @@ y[y == 2] = 1
 # print(x)
 # print(y)
 
-# model = MultivariateLinearRegression(degree=x.shape[-1]-1)
-# model.trainer = GradientDescent(model=model, epochs=100)
-# model.learning_curve(x, y, plot=True)
+model = MultivariateLinearRegression(degree=x.shape[-1]-1)
+model.trainer = GradientDescent(model=model, epochs=100)
+model.learning_curve(x, y, plot=True)
 
 model = LogisticRegression(degree=x.shape[-1]-1)
 model.learning_curve(x, y, plot=True)
