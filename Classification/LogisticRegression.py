@@ -23,22 +23,22 @@ class LogisticRegression(IGradientedModel):
         >>> model = LogisticRegression(degree=1)
         >>> print(model.theta)
         [ 0.  0.]
-        >>> print(model.apply(x_))
+        >>> print(model.predict(x_))
         [ 0.5  0.5  0.5  0.5  0.5  0.5]
-        >>> print(model.error(x_, y))
+        >>> print(model.score(x_, y))
         0.69314718056
 
         >>> model.trainer = GradientDescent(model=model, epochs=10, alpha=0.3)
-        >>> model.train(x_, y)
+        >>> model.fit(x_, y)
         >>> print(model.theta)
         [-0.36186044  0.40140421]
-        >>> print(model.apply(x_))
+        >>> print(model.predict(x_))
         [ 0.4145626   0.39043447  0.39043447  0.36683071  0.46395435  0.4391077 ]
-        >>> print(model.error(x_, y))
+        >>> print(model.score(x_, y))
         0.595568467012
 
     """
-    def apply(self, x):
+    def predict(self, x):
         m, n = x.shape
         assert n == self.degree, "Количество столбцов не совпадает с порядком регрессии, m={}, n={}".format(m, n)
         z = x.dot(self.theta)
@@ -48,7 +48,7 @@ class LogisticRegression(IGradientedModel):
 
         m, n = x.shape
 
-        y_ = self.apply(x)
+        y_ = self.predict(x)
 
         gradient = []
 

@@ -13,7 +13,7 @@ class NormalEquasionTrainer(ITrainer):
             return [], []
         from scipy import linalg
         steps = [0, 1]
-        errors = [self.model.error(x, y)]
+        errors = [self.model.score(x, y)]
         self.model.theta = linalg.inv(x.T.dot(x)).dot(x.T).dot(y)
-        errors.append(self.model.error(x, y))
+        errors.append(self.model.score(x, y))
         return steps, errors

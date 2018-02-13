@@ -10,7 +10,7 @@ class IModel:
         self.theta = None
 
     @abc.abstractmethod
-    def apply(self, x: sp.array) -> sp.array:
+    def predict(self, x: sp.array) -> sp.array:
         """ Метод, возвращающий теоретический результат по переданным значениям факторов
 
         :return: Одномерный вектор теоретически предсказанных значений результирующей переменной
@@ -59,10 +59,10 @@ class ISupervisedModel(IModel):
         super().__init__()
         self.init_weights()
 
-    def train(self, x, y):
+    def fit(self, x, y):
         self.trainer.train(x, y)
 
-    def error(self, x: sp.array, y: sp.array) -> float:
+    def score(self, x: sp.array, y: sp.array) -> float:
         """ Функция ошибки предсказания по заданному набору значений факторных
         переменных и заданному набору значений результативной переменной:
 
@@ -123,12 +123,12 @@ class ISupervisedModel(IModel):
             # print("Overfitting", m, batch_size, m - batch_size)
             for step in range(averaging_factor):
                 train, test = train_test_split(m, m - batch_size)
-                # print(step, train, test, x[train].shape, x[test].shape)
+                # print(step, fit, test, x[fit].shape, x[test].shape)
 
                 self.init_weights()
-                self.train(x[train], y[train])
-                step_train_errors.append(self.error(x[train], y[train]))
-                step_test_errors.append(self.error(x[test], y[test]))
+                self.fit(x[train], y[train])
+                step_train_errors.append(self.score(x[train], y[train]))
+                step_test_errors.append(self.score(x[test], y[test]))
             sizes_of_train_set.append(batch_size + 1)
             train_errors.append(sum(step_train_errors) / len(step_train_errors))
             test_errors.append(sum(step_test_errors) / len(step_test_errors))
@@ -138,10 +138,10 @@ class ISupervisedModel(IModel):
         if plot:
             import matplotlib.pyplot as plt
             plt.title('Overfitting curve')
-            plt.plot(sizes_of_train_set, train_errors, color='blue', label='Train error')
-            plt.plot(sizes_of_train_set, test_errors, color='red', label='Validation error')
+            plt.plot(sizes_of_train_set, train_errors, color='blue', label='Train score')
+            plt.plot(sizes_of_train_set, test_errors, color='red', label='Validation score')
             plt.ylim(ymin=0.0)
-            plt.xlabel('Size of a train set')
+            plt.xlabel('Size of a fit set')
             plt.ylabel('Error')
             plt.legend()
             plt.show()
@@ -155,7 +155,7 @@ class IGradientedModel(ISupervisedModel):
         super().__init__(trainer=trainer, measure=measure)
 
     @abc.abstractmethod
-    def apply(self, x):
+    def predict(self, x):
         pass
 
     @abc.abstractmethod
@@ -197,9 +197,9 @@ class IGradientedModel(ISupervisedModel):
                 train, test = train_test_split(len(x), test_size)
                 self.init_weights()
                 self.regularization_rate = lambda_
-                self.train(x[train], y[train])
-                step_train_errors.append(self.error(x[train], y[train]))
-                step_test_errors.append(self.error(x[test], y[test]))
+                self.fit(x[train], y[train])
+                step_train_errors.append(self.score(x[train], y[train]))
+                step_test_errors.append(self.score(x[test], y[test]))
             lambdas.append(lambda_)
             train_errors.append(sum(step_train_errors) / len(step_train_errors))
             if test_size:
@@ -209,9 +209,9 @@ class IGradientedModel(ISupervisedModel):
         if plot:
             import matplotlib.pylab as plt
             plt.title('Lambda curve')
-            plt.semilogx(lambdas, train_errors, color='blue', label='Train error')
+            plt.semilogx(lambdas, train_errors, color='blue', label='Train score')
             if test_size:
-                plt.semilogx(lambdas, test_errors, color='red', label='Validation error')
+                plt.semilogx(lambdas, test_errors, color='red', label='Validation score')
             plt.ylim(ymin=0.0)
             plt.xlabel('Regularization parameter')
             plt.ylabel('Error')
@@ -236,9 +236,9 @@ class IGradientedModel(ISupervisedModel):
                 train, test = train_test_split(len(x), test_size)
                 self.init_weights()
                 self.trainer.learning_rate = alpha
-                self.train(x[train], y[train])
-                step_train_errors.append(self.error(x[train], y[train]))
-                step_test_errors.append(self.error(x[test], y[test]))
+                self.fit(x[train], y[train])
+                step_train_errors.append(self.score(x[train], y[train]))
+                step_test_errors.append(self.score(x[test], y[test]))
             alphas.append(alpha)
             train_errors.append(sum(step_train_errors) / len(step_train_errors))
             if test_size:
@@ -248,9 +248,9 @@ class IGradientedModel(ISupervisedModel):
         if plot:
             import matplotlib.pylab as plt
             plt.title('Alpha curve')
-            plt.semilogx(alphas, train_errors, color='blue', label='Train error')
+            plt.semilogx(alphas, train_errors, color='blue', label='Train score')
             if test_size:
-                plt.semilogx(alphas, test_errors, color='red', label='Validation error')
+                plt.semilogx(alphas, test_errors, color='red', label='Validation score')
             plt.ylim(ymin=0.0)
             plt.xlabel('Learning rate')
             plt.ylabel('Error')
@@ -271,7 +271,7 @@ class ILinearRegression(IGradientedModel):
         super().__init__(trainer=trainer, measure=measure, regularization=regularization)
 
     @abc.abstractmethod
-    def apply(self, x):
+    def predict(self, x):
         pass
 
     @abc.abstractmethod
@@ -293,7 +293,7 @@ class SupportVectorMachines(IGradientedModel):
     def init_weights(self):
         raise NotImplementedError
 
-    def apply(self, x):
+    def predict(self, x):
         raise NotImplementedError
 
 
@@ -304,10 +304,10 @@ class ANNAdapter(ISupervisedModel):
     def init_weights(self):
         raise NotImplementedError
 
-    def apply(self, x):
+    def predict(self, x):
         raise NotImplementedError
 
-    def train(self, x, y):
+    def fit(self, x, y):
         raise NotImplementedError
 
 
@@ -315,7 +315,7 @@ class KNearestNeighbours(ISupervisedModel):
     def init_weights(self):
         raise NotImplementedError
 
-    def apply(self, x):
+    def predict(self, x):
         raise NotImplementedError
 
     def __init__(self, trainer: ITrainer, measure: IMeasure):

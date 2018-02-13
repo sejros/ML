@@ -12,7 +12,7 @@ class CrossEntropyError(IMeasure):
         if m == 0:
             return None
 
-        y_ = self.model.apply(x)
+        y_ = self.model.predict(x)
         error = -y * sp.log(y_) - (1-y) * sp.log(1 - y_)
-        # print("Error", error)
+        # print("Error", score)
         return sum(error) / m

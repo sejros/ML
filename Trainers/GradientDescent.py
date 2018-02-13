@@ -16,10 +16,10 @@ class GradientDescent(IIterativeTrainer):
         while i < self.epochs:
             old_params = self.model.theta.copy()
             gradient = self.model.gradient(x, y)
-            # print("Descent", old_params, gradient, self.model.error(x, y))
+            # print("Descent", old_params, gradient, self.model.score(x, y))
             new_params = old_params - self.learning_rate * gradient
             self.model.theta = new_params
-            error = self.model.error(x, y)
+            error = self.model.score(x, y)
             steps.append(i)
             errors.append(error)
             i += 1
@@ -30,7 +30,7 @@ class GradientDescent(IIterativeTrainer):
 """
 class StochasticGradientDescent(ITrainer):
 
-    def train(self, x: sp.array, y: sp.array, epochs=10) -> tuple:
+    def fit(self, x: sp.array, y: sp.array, epochs=10) -> tuple:
         m, n = x.shape
         steps = []
         errors = []
@@ -42,8 +42,8 @@ class StochasticGradientDescent(ITrainer):
                 gradient = self.model.gradient(x[j:j + 1], y[j:j + 1])
                 new_params = old_params - self.learning_rate * gradient
                 self.model.theta = new_params
-                error = self.model.error(x[j:j+1], y[j:j+1])
-                inner_error.append(error)
+                score = self.model.score(x[j:j+1], y[j:j+1])
+                inner_error.append(score)
             steps.append(i)
             errors.append(sum(inner_error) / len(inner_error))
             i += 1

@@ -10,14 +10,14 @@ class MSEMeasure(IMeasure):
         if m == 0:
             return None
 
-        y_ = self.model.apply(x)
+        y_ = self.model.predict(x)
         # print(y_.shape, y.shape)
         error = sp.square(y_ - y)
-        # print(y_.shape, x.shape, y.shape, error.shape)
+        # print(y_.shape, x.shape, y.shape, score.shape)
         assert error.shape == (m,)
 
         error = sum(error) / (2 * m)
 
-        # print("MSE", error.shape, error)
+        # print("MSE", score.shape, score)
 
         return error

@@ -22,19 +22,19 @@ class UnivariateLinearRegression(ILinearRegression):
         >>> model.theta
         array([0, 0])
 
-        >>> model.apply(x_)
+        >>> model.predict(x_)
         array([ 0.,  0.,  0.])
 
-        >>> model.train(x_, y)
+        >>> model.fit(x_, y)
         >>> print(model.theta)
         [ 1.  2.]
-        >>> model.apply(x_)
+        >>> model.predict(x_)
         array([ 1.,  3.,  5.])
 
         >>> model.init_weights()
         >>> model.theta
         array([0, 0])
-        >>> print(model.apply(x_))
+        >>> print(model.predict(x_))
         [ 0.  0.  0.]
 
 
@@ -48,16 +48,16 @@ class UnivariateLinearRegression(ILinearRegression):
 
         >>> model = UnivariateLinearRegression()
         >>> model.trainer = GradientDescent(model=model, epochs=5, alpha=0.3)
-        >>> print(model.error(x_, y))
+        >>> print(model.score(x_, y))
         5.83333333333
-        >>> model.train(x_, y)
+        >>> model.fit(x_, y)
         >>> print(model.theta)
         [ 1.18524  1.86148]
-        >>> print(model.error(x_, y))
+        >>> print(model.score(x_, y))
         0.00748730933333
 
     """
-    def apply(self, x):
+    def predict(self, x):
         m, n = x.shape
         assert n == 2, "Два столбца (включая единичный) для парной ререссии (m={}, n={})".format(m, n)
 
@@ -67,7 +67,7 @@ class UnivariateLinearRegression(ILinearRegression):
         m, n = x.shape
         assert n == 2, "Два столбца для обучения нелинейной регрессии"
 
-        y_ = self.apply(x)
+        y_ = self.predict(x)
         j0 = sum(y_ - y) / m
         j1 = sum(sp.multiply(y_ - y, x[:, -1])) / m
 

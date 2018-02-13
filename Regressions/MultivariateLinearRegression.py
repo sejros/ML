@@ -22,22 +22,22 @@ class MultivariateLinearRegression(ILinearRegression):
         >>> model = MultivariateLinearRegression(degree=2)
         >>> print(model.theta)
         [ 0.  0.  0.]
-        >>> print(model.apply(x_))
+        >>> print(model.predict(x_))
         [ 0.  0.  0.  0.]
-        >>> print(model.error(x_, y))
+        >>> print(model.score(x_, y))
         10.5
 
         >>> model.trainer = GradientDescent(model=model, epochs=5, alpha=0.3)
-        >>> model.train(x_, y)
+        >>> model.fit(x_, y)
         >>> print(model.theta)
         [ 3.32772     1.05831645  1.05831645]
-        >>> print(model.apply(x_))
+        >>> print(model.predict(x_))
         [ 2.26940355  2.97494785  3.68049215  4.38603645]
-        >>> print(model.error(x_, y))
+        >>> print(model.score(x_, y))
         1.27323991891
 
     """
-    def apply(self, x):
+    def predict(self, x):
         m, n = x.shape
         assert n == self.degree, \
             "Количество столбцов не совпадает с порядком регрессии, m={}, n={}, degree={}".format(m, n, self.degree)
@@ -46,7 +46,7 @@ class MultivariateLinearRegression(ILinearRegression):
     def gradient(self, x, y):
         m, n = x.shape
 
-        y_ = self.apply(x)
+        y_ = self.predict(x)
 
         gradient = []
 

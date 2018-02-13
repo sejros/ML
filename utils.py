@@ -8,9 +8,9 @@ def train_test_split(length: int, num: int =0) -> tuple:
     """ Функция используется для разбиения массивов на обучающую и тренировочную выборки.
 
     Использование:
-        train, test = train_test_split(len(Y), frac=0.8)
+        fit, test = train_test_split(len(Y), frac=0.8)
         # X - двумерный массив, используем для разбиения вторую ось
-        X_train, Y_train = X[:, train], Y[train]
+        X_train, Y_train = X[:, fit], Y[fit]
         X_train, Y_train = X[:, test], Y[test]
 
     :param length: Количество элементов в исходном массиве
